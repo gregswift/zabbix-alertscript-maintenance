@@ -1,0 +1,92 @@
+#!/usr/bin/env python
+
+from datetime import datetime, timedelta
+import time
+import configparser
+import sys
+from pyzabbix import ZabbixAPI, ZabbixAPIException
+
+CONFIG_FILE = '/etc/zabbix.d/maintmode.conf'
+
+def get_config(config_file=CONFIG_FILE):
+    # TODO: actually process a real config file
+    return {
+        'user': 'Admin',
+        'password': '',
+        'api': 'http://zabbix-dfw1.nytefyre.net' }
+
+def _parse_zabbix_body(body_str):
+    return dict(line.strip().split(':', 1) for line in body_str.strip().split('\n'))
+
+def _parse_zabbix_subject(subject_str):
+    # OK maps to False because it means things are better
+    if subject_str.lower() == 'ok':
+        return False
+    # Where problem means that we need to turn on maint/offline
+    elif subject_str.lower()  == 'problem':
+        return True
+    return None
+
+def get_api(api, user, password):
+    zapi = ZabbixAPI(api)
+    zapi.login(user, password)
+    return zapi
+
+def get_hostid(api, name):
+    return api.host.get(name)[0][u'hostid']
+
+def get_maintid(api, name, type):
+    name='{0} {1}'.format(name, type)
+    try:
+        return api.maintenance.get(name)[0][u'maintenanceid']
+    except:
+        return None
+
+def set_maint(api, name, type, duration=3600):
+    hostid = get_hostid(api, name)
+    start = datetime.now()
+    end = start+timedelta(seconds=duration)
+    method = 'maintenance.create'
+    return api.maintenance.create(
+        name='{0} {1}'.format(name, type),
+        hostids=[ hostid ],
+        active_since=time.mktime(start.timetuple()),
+        active_till=time.mktime(end.timetuple()),
+        timeperiods=[{"timeperiod_type": 0}])
+
+def clear_maint(api, name, type):
+    name='{0} {1}'.format(name, type)
+    maint_id = get_maintid(api, name, type)
+    try:
+        return api.maintenance.delete(maint_id)
+    except:
+        return None
+
+def main():
+    # The second argument is task, OK/Problem
+    enable = _parse_zabbix_subject(sys.argv[2])
+    # Third argument contains relevant host data
+    details = _parse_zabbix_body(sys.argv[3])
+    type = None
+    if 'offline mode' in details['trigger_name']:
+        type = 'offline'
+    if 'maintenance mode' in details['trigger_name']:
+        type = 'maint'
+    try:
+        duration = int(details['{0}_duration'.format(type)])
+    except:
+        duration = 3600
+
+    config = get_config()
+
+    api = get_api(config['api'],config['user'],config['password'])
+    if enable:
+        a = set_maint(api, details['host_name'], type, duration)
+    else:
+        id = get_maintid(api, details['host_name'], type)
+        # TODO: handle id is None
+        a = clear_maint(api, details['host_name'], type)
+        # TODO: Handle no maintenanceid? because it wasnt there for whatever reason
+
+if __name__ == '__main__':
+    main()
