@@ -11,7 +11,7 @@ import sys
 
 from pyzabbix import ZabbixAPI
 
-CONFIG_FILE = '/etc/zabbix/maintmode.conf'
+CONFIG_FILE = '/etc/zabbix/alertscripts/maintmode.conf'
 
 def get_config(config_file=CONFIG_FILE):
     parser = configparser.SafeConfigParser()
