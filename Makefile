@@ -7,18 +7,21 @@ ARCH = noarch
 
 # Variables for clean build directory tree under repository
 BUILDDIR = ./build
-SDISTDIR = ${BUILDDIR}/sdist
+ARTIFACTDIR = ./artifacts
+SDISTDIR = ${ARTIFACTDIR}/sdist
 RPMBUILDDIR = ${BUILDDIR}/rpm-build
-RPMDIR = ${BUILDDIR}/rpms
+RPMDIR = ${ARTIFACTDIR}/rpms
+DEBBUILDDIR = ${BUILDDIR}/deb-build
+DEBDIR = ${ARTIFACTDIR}/debs
 
 # base rpmbuild command that utilizes the local buildroot
 # not using the above variables on purpose.
 # if you can make it work, PRs are welcome!
 RPMBUILD = rpmbuild --define "_topdir %(pwd)/build" \
-	--define "_sourcedir  %{_topdir}/sdist" \
-	--define "_builddir %{_topdir}/rpm-build" \
-	--define "_srcrpmdir %{_rpmdir}" \
-	--define "_rpmdir %{_topdir}/rpms"
+    --define "_sourcedir  %(pwd)/artifacts/sdist" \
+    --define "_builddir %{_topdir}/rpm-build" \
+    --define "_srcrpmdir %{_rpmdir}" \
+    --define "_rpmdir %(pwd)/artifacts/rpms"
 
 INSTALLDIR = /var/lib/zabbixsrv/alertscripts/
 CONFIGDIR = /etc/zabbix/alertscripts/
@@ -28,6 +31,9 @@ all: rpms
 
 clean:
 	rm -rf ${BUILDDIR}/ *~ ${PACKAGE}/
+
+clean_all: clean
+	rm -rf ${ARTIFACTDIR}/
 
 install:
 	mkdir -p ${DESTDIR}${INSTALLDIR}
