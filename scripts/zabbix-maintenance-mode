@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 import time
 import sys
 
-from pyzabbix import ZabbixAPI, ZabbixAPIException
+from pyzabbix import ZabbixAPI
 
 CONFIG_FILE = '/etc/zabbix.d/maintmode.conf'
 
@@ -17,7 +17,7 @@ def get_config(config_file=CONFIG_FILE):
     parser = configparser.SafeConfigParser()
     try:
         parser.read(config_file)
-    except MissingSectionHeaderError:
+    except configparser.MissingSectionHeaderError:
         sys.stderr.write('Config file missing data, compare to documenation\n')
         sys.exit(255)
     config = {}
@@ -25,33 +25,34 @@ def get_config(config_file=CONFIG_FILE):
         config['user'] = parser.get('zabbix', 'user')
         config['password'] = parser.get('zabbix', 'password')
         config['api'] = parser.get('zabbix', 'api')
-    except NoSectionError, NoOptionError:
+    except configparser.NoSectionError, configparser.NoOptionError:
         sys.stderr.write('Config file missing data, compare to documenation\n')
         sys.exit(250)
     return config
 
-def _parse_zabbix_body(body_str):
-    return dict(line.strip().split(':', 1) for line in body_str.strip().split('\n'))
+def _parse_zabbix_body(body):
+    return dict(line.strip().split(':', 1) for line in body.strip().split('\n'))
 
-def _parse_zabbix_subject(subject_str):
+def _parse_zabbix_subject(subject):
+    subject = subject.lower()
     # OK maps to False because it means things are better
-    if subject_str.lower() == 'ok':
+    if subject == 'ok':
         return False
     # Where problem means that we need to turn on maint/offline
-    elif subject_str.lower()  == 'problem':
+    elif subject == 'problem':
         return True
     return None
 
-def get_api(api, user, password):
-    zapi = ZabbixAPI(api)
-    zapi.login(user, password)
+def get_api(config):
+    zapi = ZabbixAPI(config['api'])
+    zapi.login(config['user'], config['password'])
     return zapi
 
 def get_hostid(api, name):
     return api.host.get(name)[0][u'hostid']
 
 def get_maintid(api, name, type):
-    name='{0} {1}'.format(name, type)
+    name = '{0} {1}'.format(name, type)
     try:
         return api.maintenance.get(name)[0][u'maintenanceid']
     except:
@@ -61,16 +62,15 @@ def set_maint(api, name, type, duration=3600):
     hostid = get_hostid(api, name)
     start = datetime.now()
     end = start+timedelta(seconds=duration)
-    method = 'maintenance.create'
     return api.maintenance.create(
         name='{0} {1}'.format(name, type),
-        hostids=[ hostid ],
+        hostids=[hostid],
         active_since=time.mktime(start.timetuple()),
         active_till=time.mktime(end.timetuple()),
         timeperiods=[{"timeperiod_type": 0}])
 
 def clear_maint(api, name, type):
-    name='{0} {1}'.format(name, type)
+    name = '{0} {1}'.format(name, type)
     maint_id = get_maintid(api, name, type)
     try:
         return api.maintenance.delete(maint_id)
@@ -89,25 +89,22 @@ def parse_details(args):
         duration = int(details['{0}_duration'.format(type)])
     except:
         duration = 3600
-    return (details, type, duration)
+    return (details['host_name'], type, duration)
 
 def parse_cli(args):
     # The second argument is task, OK/Problem
     enable = _parse_zabbix_subject(args[2])
     # The third argument is the details body
-    (details, type, duration) = parse_details(args[3])
-    return (enable, details, type, duration)
+    (host_name, type, duration) = parse_details(args[3])
+    return (enable, host_name, type, duration)
 
 def main():
-    (enable, details, type, duration) = parse_details(sys.argv)
-
-    config = get_config()
-
-    api = get_api(config['api'], config['user'], config['password'])
+    (enable, host_name, type, duration) = parse_cli(sys.argv)
+    api = get_api(get_config())
     if enable:
-        a = set_maint(api, details['host_name'], type, duration)
+        return set_maint(api, host_name, type, duration)
     else:
-        a = clear_maint(api, details['host_name'], type)
+        return clear_maint(api, host_name, type)
 
 if __name__ == '__main__':
     main()
