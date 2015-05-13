@@ -74,8 +74,7 @@ At this point the implementation can become very specific to the environment.  F
 * Create action
   * Name: Manage maintenance mode
   * Default subject: ```{TRIGGER.STATUS}```
-  * Default message: ```
-trigger_name:{TRIGGER.NAME}
+  * Default message: ```trigger_name:{TRIGGER.NAME}
 trigger_id:{TRIGGER.ID}
 host_name:{HOST.NAME}
 event_id:{EVENT.ID}
