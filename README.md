@@ -82,6 +82,7 @@ event_id:{EVENT.ID}
 maint_duration:{$PLIGHT_MAINT_PRD}
 offline_duration:{$PLIGHT_OFFLINE_PRD}
 ```
+
   * Enabled: [checked]
   * Under Conditions
     * New trigger: Application = Plight mode
