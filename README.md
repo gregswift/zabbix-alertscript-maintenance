@@ -74,14 +74,15 @@ At this point the implementation can become very specific to the environment.  F
 * Create action
   * Name: Manage maintenance mode
   * Default subject: ```{TRIGGER.STATUS}```
-  * Default message: ```trigger_name:{TRIGGER.NAME}
+  * Default message:
+```
+trigger_name:{TRIGGER.NAME}
 trigger_id:{TRIGGER.ID}
 host_name:{HOST.NAME}
 event_id:{EVENT.ID}
 maint_duration:{$PLIGHT_MAINT_PRD}
 offline_duration:{$PLIGHT_OFFLINE_PRD}
 ```
-
   * Enabled: [checked]
   * Under Conditions
     * New trigger: Application = Plight mode
