@@ -1,5 +1,5 @@
 Name:           zabbix-alertscript-maintenance
-Version:        0.1.0
+Version:        0.1.1
 Release:        1%{?dist}
 Summary:        Script that allows Zabbix to send a node into maintenance
 
@@ -10,6 +10,7 @@ Source0:        %{name}.tar.gz
 BuildArch:      noarch
 
 Requires:       zabbix >= 2.2
+Requires:       python-pyzabbix
 
 %description
 
@@ -34,5 +35,8 @@ make install DESTDIR=$RPM_BUILD_ROOT
 
 
 %changelog
-* Mon May 11 2015 greg5320 <gregswift@gmail.com>
+* Fri May 15 2015 greg5320 <gregswift@gmail.com> - 0.1.1-1
+- Add python-pyzabbix dependency
+
+* Mon May 11 2015 greg5320 <gregswift@gmail.com> - 0.1.0-1
 - Initial build
