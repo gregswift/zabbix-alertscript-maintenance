@@ -29,7 +29,7 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %files
 %doc README.md LICENSE
 %config(noreplace) %{_sysconfdir}/zabbix/alertscripts/maintmode.conf
-%attr(0755,zabbixsrv,zabbixsrv) %{_sharedstatedir}/zabbixsrv/alertscripts/zabbix-maintenance-mode
+%attr(0755,zabbixsrv,zabbixsrv) %{_sharedstatedir}/zabbixsrv/alertscripts/maintenance-mode
 %{_datadir}/%{name}/*.xml
 
 

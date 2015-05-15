@@ -24,7 +24,7 @@ def get_config(config_file=CONFIG_FILE):
     try:
         config['user'] = parser.get('zabbix', 'user')
         config['password'] = parser.get('zabbix', 'password')
-        config['api'] = parser.get('zabbix', 'api')
+        config['endpoint'] = parser.get('zabbix', 'endpoint')
     except configparser.NoSectionError, configparser.NoOptionError:
         sys.stderr.write('Config file missing data, compare to documenation\n')
         sys.exit(250)
@@ -44,7 +44,7 @@ def _parse_zabbix_subject(subject):
     return None
 
 def get_api(config):
-    zapi = ZabbixAPI(config['api'])
+    zapi = ZabbixAPI(config['endpoint'])
     zapi.login(config['user'], config['password'])
     return zapi
 

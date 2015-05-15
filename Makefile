@@ -39,7 +39,7 @@ install:
 	mkdir -p ${DESTDIR}${INSTALLDIR}
 	mkdir -p ${DESTDIR}${CONFIGDIR}
 	mkdir -p ${DESTDIR}${DATADIR}
-	cp -pr scripts/zabbix-maintenance-mode ${DESTDIR}${INSTALLDIR}
+	cp -pr scripts/maintenance-mode ${DESTDIR}${INSTALLDIR}
 	cp -pr config/maintmode.conf ${DESTDIR}${CONFIGDIR}
 	cp -pr templates/*.xml ${DESTDIR}${DATADIR}
 
@@ -50,7 +50,7 @@ install_rpms: rpms
 reinstall: uninstall install
 
 uninstall: clean
-	rm -f ${DESTDIR}${INSTALLDIR}/zabbix-maintenance-mode
+	rm -f ${DESTDIR}${INSTALLDIR}/maintenance-mode
 	rm -f ${DESTDIR}${CONFIGDIR}/maintmode.conf
 	rm -rf ${DESTDIR}${DATADIR}
 

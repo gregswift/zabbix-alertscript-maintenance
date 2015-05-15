@@ -104,7 +104,7 @@ Here is a same of its contents.
 [zabbix]
 user=Maintenance
 password=somereallygoodpassword
-api=https://localhost/zabbix
+endpoint=https://localhost/zabbix
 ```
 
 ## Testing the configuration and the installation.
