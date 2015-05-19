@@ -141,7 +141,7 @@
     </templates>
     <triggers>
         <trigger>
-            <expression>{$PLIGHT_FOR_MAINT}=1&{RAX - plight:web.page.regexp[{HOST.IP},,{$PLIGHT_PORT},&quot;HTTP/1.0 [0-9]{3} ([a-z ]+)&quot;,,\1].regexp(unavailable,#1)}=1</expression>
+            <expression>{$PLIGHT_FOR_MAINT}=1&amp;{RAX - plight:web.page.regexp[{HOST.IP},,{$PLIGHT_PORT},&quot;HTTP/1.0 [0-9]{3} ([a-z ]+)&quot;,,\1].regexp(unavailable,#1)}=1</expression>
             <name>Node in maintenance mode</name>
             <url>http://{HOST.IP}:{$PLIGHT_PORT}</url>
             <status>0</status>
@@ -156,7 +156,7 @@
             </dependencies>
         </trigger>
         <trigger>
-            <expression>{$PLIGHT_FOR_MAINT}=1&{RAX - plight:web.page.regexp[{HOST.IP},,{$PLIGHT_PORT},&quot;HTTP/1.0 [0-9]{3} ([a-z ]+)&quot;,,\1].regexp(offline,#1)}=1</expression>
+            <expression>{$PLIGHT_FOR_MAINT}=1&amp;{RAX - plight:web.page.regexp[{HOST.IP},,{$PLIGHT_PORT},&quot;HTTP/1.0 [0-9]{3} ([a-z ]+)&quot;,,\1].regexp(offline,#1)}=1</expression>
             <name>Node in offline mode</name>
             <url>http://{HOST.IP}:{$PLIGHT_PORT}</url>
             <status>0</status>
