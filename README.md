@@ -44,7 +44,7 @@ Media types are assigned to users, and the ability to manage maintenance mode re
 * Select 'User group'
 * Create user group
   * Group name: Maintenance
-  * Frontend access: Disabled
+  * Frontend access: Internal
   * Enabled: [checked]
   * Under Permissions:
     * Read-write -> Add: Select all
