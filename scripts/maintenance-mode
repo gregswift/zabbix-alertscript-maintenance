@@ -54,7 +54,11 @@ def get_hostid(api, name):
 def get_maintid(api, name, type):
     name = '{0} {1}'.format(name, type)
     try:
-        return api.maintenance.get(name)[0][u'maintenanceid']
+        m =  api.maintenance.get(name)
+        if m[0][u'name'] == name:
+            return m[0][u'maintenanceid']
+        else:
+            return None
     except:
         return None
 
@@ -70,7 +74,6 @@ def set_maint(api, name, type, duration=3600):
         timeperiods=[{"timeperiod_type": 0}])
 
 def clear_maint(api, name, type):
-    name = '{0} {1}'.format(name, type)
     maint_id = get_maintid(api, name, type)
     try:
         return api.maintenance.delete(maint_id)
