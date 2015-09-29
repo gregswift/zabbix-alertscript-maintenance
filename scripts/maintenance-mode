@@ -49,12 +49,12 @@ def get_api(config):
     return zapi
 
 def get_hostid(api, name):
-    return api.host.get(name)[0][u'hostid']
+    return api.host.get(filter={"host":name})[0][u'hostid']
 
 def get_maintid(api, name, type):
     name = '{0} {1}'.format(name, type)
     try:
-        m =  api.maintenance.get(name)
+        m =  api.maintenance.get(filter={"name":name})
         if m[0][u'name'] == name:
             return m[0][u'maintenanceid']
         else:
