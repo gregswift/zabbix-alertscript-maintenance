@@ -1,6 +1,6 @@
 Name:           zabbix-alertscript-maintenance
-Version:        0.1.1
-Release:        2%{?dist}
+Version:        0.1.2
+Release:        1%{?dist}
 Summary:        Script that allows Zabbix to send a node into maintenance
 
 License:        ASLv2
@@ -35,6 +35,9 @@ make install DESTDIR=$RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Oct 14 2015 greg5320 <gregswift@gmail.com> - 0.1.2-1
+- Update to new release
+
 * Fri May 15 2015 greg5320 <gregswift@gmail.com> - 0.1.1-2
 - Fix name of python-pyzabbix dependency
 
